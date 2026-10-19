@@ -14,6 +14,9 @@ import { activeBotChain, addressUrl, isBotChainId } from "@/lib/botchain/chain";
 import { formatNativeAmount } from "@/lib/botchain/amount";
 import { splitterAbi } from "@/lib/botchain/abi";
 import { percentOf } from "@/lib/split";
+import CopyAddress from "@/components/ui/CopyAddress";
+import SavedSplitters from "@/components/fairshare/SavedSplitters";
+import { rememberSplitter } from "@/lib/saved-splitters";
 
 /**
  * Open any splitter by address and withdraw from it.
@@ -118,17 +121,44 @@ function SplitterBody() {
 
   const symbol = activeBotChain.nativeCurrency.symbol;
 
+  // A successful read is the only proof this address is a splitter. The dependency is the payee
+  // COUNT, not the array — wagmi returns a fresh array after each refetch, and depending on it
+  // would re-run this every render.
+  const remembered = useRef<string | null>(null);
+  const payeeCount = payees?.length ?? 0;
+  useEffect(() => {
+    if (!splitter || !isBotChainId(chainId) || payeeCount === 0) return;
+    const key = `${chainId}:${splitter.toLowerCase()}`;
+    if (remembered.current === key) return;
+    remembered.current = key;
+    rememberSplitter(splitter, chainId);
+  }, [splitter, chainId, payeeCount]);
+
   return (
     <div className="flex flex-col gap-4">
+      <SavedSplitters current={splitter} />
+
       <Panel>
-        <Input
-          label="Splitter address"
-          value={typed}
-          onChange={(e) => setTyped(e.target.value)}
-          placeholder="0x…"
-          mono
-          hint="No wallet needed to look at one."
-        />
+        <div className="flex flex-col gap-3">
+          <Input
+            label="Splitter address"
+            value={typed}
+            onChange={(e) => setTyped(e.target.value)}
+            placeholder="0x…"
+            mono
+            hint="No wallet needed to look at one."
+          />
+          {splitter && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <CopyAddress value={splitter} label="copy address" />
+              <a href={addressUrl(chainId, splitter)} target="_blank" rel="noreferrer"
+                className="text-[10px] uppercase tracking-[0.06em] underline"
+                style={{ color: "var(--text-tertiary)" }}>
+                explorer
+              </a>
+            </div>
+          )}
+        </div>
       </Panel>
 
       {ready && summary.isLoading && (

@@ -10,6 +10,8 @@ import Button from "@/components/ui/Button";
 import TxStatus, { type TxStage } from "@/components/ui/TxStatus";
 import { useToast } from "@/components/ui/Toast";
 import { addressUrl, isBotChainId } from "@/lib/botchain/chain";
+import CopyAddress from "@/components/ui/CopyAddress";
+import { rememberSplitter } from "@/lib/saved-splitters";
 import { getDeployment } from "@/lib/botchain/deployment";
 import { splitterFactoryAbi } from "@/lib/botchain/abi";
 import { isDeployable, MAX_PAYEES, newPayee, percentOf, validateSplit, type Payee } from "@/lib/split";
@@ -67,9 +69,11 @@ export default function CreateSplit() {
     }
 
     setSplitter(created);
+    // The factory emits this address once; nothing else can recover it later.
+    if (created && isBotChainId(chainId)) rememberSplitter(created, chainId);
     setStage("confirmed");
     toast("success", "Splitter deployed", "Send BOT to it and the shares apply automatically.");
-  }, [hash, receipt.isSuccess, receipt.isError, receipt.data, toast]);
+  }, [hash, receipt.isSuccess, receipt.isError, receipt.data, chainId, toast]);
 
   const handleCreate = useCallback(async () => {
     if (!deployment || !isBotChainId(chainId) || !ready) return;
@@ -120,15 +124,18 @@ export default function CreateSplit() {
                 >
                   Send payments to
                 </span>
-                <a
-                  href={addressUrl(chainId, splitter)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-mono text-[12px] break-all underline"
-                  style={{ color: "var(--accent)" }}
-                >
-                  {splitter}
-                </a>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <a
+                    href={addressUrl(chainId, splitter)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-mono text-[12px] break-all underline"
+                    style={{ color: "var(--accent)" }}
+                  >
+                    {splitter}
+                  </a>
+                  <CopyAddress value={splitter} label="copy address" />
+                </div>
               </div>
 
               <p className="text-[11px] leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
