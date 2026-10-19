@@ -36,13 +36,15 @@ export default function PageShell({ children, nav = [], title, description }: Pa
     <div className="flex flex-col" style={{ minHeight: "100dvh" }}>
       <header className="flex items-center justify-between gap-3 px-5 md:px-10 py-4 flex-shrink-0">
         <Link href="/" className="flex items-center gap-2.5 no-underline">
-          <span
+          <svg
             aria-hidden="true"
-            style={{
-              width: "18px", height: "18px", borderRadius: "999px",
-              background: "conic-gradient(var(--accent) 0 50%, #1E6B4A 50% 80%, #14402F 80% 100%)",
-            }}
-          />
+            viewBox="0 0 100 100"
+            style={{ width: "19px", height: "19px", display: "block" }}
+          >
+            <path d="M50 48 L50 10 A38 38 0 0 1 83 59 Z" fill="var(--accent)" />
+            <path d="M53 53 L86 65 A38 38 0 0 1 28 80 Z" fill="#7FD9AE" />
+            <path d="M47 52 L21 77 A38 38 0 0 1 46 10 Z" fill="#1E6B4A" />
+          </svg>
           <span className="text-[17px] font-semibold tracking-[-0.02em]">{app.name}</span>
         </Link>
         <div className="flex items-center gap-3">
