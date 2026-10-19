@@ -1,153 +1,75 @@
 @import "tailwindcss";
-
 @source "../app/**/*.{ts,tsx}";
 @source "../components/**/*.{ts,tsx}";
 @source "../lib/**/*.{ts,tsx}";
 
 @theme {
-  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-
-  --radius: 2px;
-  --radius-sm: 2px;
-  --radius-md: 4px;
+  --font-sans: var(--font-text), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-num), ui-monospace, monospace;
+  --radius: 8px;
 }
 
 /**
- * Design tokens.
- *
- * Every component reads these through `var(--token)` rather than a Tailwind colour class, which is
- * what lets a project change its whole palette from `lib/app-config.ts`: the root layout writes
- * `--accent` inline, overriding the default below. Nothing else needs editing per project.
+ * Fairshare has to explain itself before anyone will point an income stream at it — that a split
+ * is permanent, that payees pull rather than being pushed. So the page gives explanation equal
+ * billing with the form, and the palette is warm and green rather than another cold dark app.
  */
 :root {
-  --bg-base: #0A0A0A;
-  --bg-surface: #111111;
-  --bg-elevated: #181818;
-  --bg-overlay: #1F1F1F;
-  --border-subtle: #1E1E1E;
-  --border-default: #2A2A2A;
-  --border-strong: #383838;
-  --text-primary: #EBEBEB;
-  --text-secondary: #888888;
-  --text-tertiary: #555555;
-  --accent: #00E5CC;
-  --success: #1DB954;
-  --warning: #F5A623;
-  --danger: #E53E3E;
+  --bg-base: #0A0F0C;
+  --bg-surface: #101711;
+  --bg-elevated: #162019;
+  --bg-overlay: #1D2921;
+  --border-subtle: #1A241D;
+  --border-default: #27352A;
+  --border-strong: #3A4C3E;
+  --text-primary: #E7EFE8;
+  --text-secondary: #92A596;
+  --text-tertiary: #63746A;
+  --accent: #3FB981;
+  --success: #3FB981;
+  --warning: #E3B341;
+  --danger: #E5707A;
 }
 
 @layer base {
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  html {
-    height: 100%;
-  }
-
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { height: 100%; }
   body {
     background: var(--bg-base);
+    background-image: radial-gradient(900px 500px at 15% 0%, rgba(63,185,129,0.10), transparent 70%);
+    background-repeat: no-repeat;
     color: var(--text-primary);
     font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
     min-height: 100%;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
-
-  a {
-    color: inherit;
-  }
+  a { color: inherit; }
+  h1 { font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; }
 }
 
-/* Touch targets
- *
- * The interface is deliberately dense, and at 26px tall a `size="sm"` button is comfortable with a
- * mouse and a coin-flip with a thumb. `pointer: coarse` matches touch input rather than screen
- * width, so this raises the hit area exactly where it is needed and leaves mouse density
- * untouched, including on a small laptop window.
- *
- * 44px is Apple's minimum; Android asks for 48dp. Padding rather than height, so a control that is
- * already large enough is not stretched.
- */
+input[type="text"], input[type="number"] {
+  background: rgba(0,0,0,0.3) !important;
+  border: 1px solid var(--border-default) !important;
+  border-radius: 8px !important;
+}
+input:focus { border-color: var(--accent) !important; outline: none; }
+
 @media (pointer: coarse) {
-  button,
-  [role="button"],
-  a.nav-link,
-  select,
-  label[for] {
-    min-height: 44px;
-  }
-
-  input,
-  textarea {
-    /* Anything under 16px makes iOS Safari zoom the page on focus, and it does not zoom back. */
-    font-size: 16px;
-  }
+  button, [role="button"], a.nav-link, select, label[for] { min-height: 44px; }
+  input, textarea { font-size: 16px; }
 }
 
-/* Nothing should be able to scroll the page sideways. A single overflowing address or hash
- * otherwise shifts the whole layout and there is no obvious culprit. */
-html,
-body {
-  overflow-x: hidden;
-}
+html, body { overflow-x: hidden; }
+::selection { background: rgba(63,185,129,0.28); }
+::-webkit-scrollbar { width: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 
-::selection {
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
-  color: var(--accent);
-}
-
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-base);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 2px;
-}
-
-.mono {
-  font-family: var(--font-mono);
-  letter-spacing: 0;
-}
-
-/* Toast entry. Radix drives the data-state; without the keyframes the toast simply appears. */
-@keyframes slideIn {
-  from { transform: translateX(8px); opacity: 0; }
-  to   { transform: translateX(0);   opacity: 1; }
-}
-@keyframes swipeOut {
-  to { transform: translateX(100%); opacity: 0; }
-}
-
-@keyframes shimmer {
-  0%   { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
-}
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--bg-surface) 25%,
-    var(--bg-elevated) 50%,
-    var(--bg-surface) 75%
-  );
-  background-size: 800px 100%;
-  animation: shimmer 1.6s ease-in-out infinite;
-  border-radius: 2px;
-}
-
+@keyframes slideIn { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes swipeOut { to { transform: translateX(100%); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
