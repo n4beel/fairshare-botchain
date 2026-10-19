@@ -121,6 +121,11 @@ function SplitterBody() {
 
   const symbol = activeBotChain.nativeCurrency.symbol;
 
+  // useReadContracts defaults to allowFailure, so a call that reverts lands as an undefined
+  // `result` inside `data` and never sets isError. Reading the flag alone left a well-formed but
+  // wrong address — one belonging to the other network, say — rendering nothing whatsoever.
+  const unreadable = !summary.isLoading && (summary.isError || payees === undefined);
+
   // A successful read is the only proof this address is a splitter. The dependency is the payee
   // COUNT, not the array — wagmi returns a fresh array after each refetch, and depending on it
   // would re-run this every render.
@@ -167,10 +172,11 @@ function SplitterBody() {
         </Panel>
       )}
 
-      {ready && summary.isError && (
+      {ready && unreadable && (
         <Panel>
           <p className="text-[12px]" style={{ color: "var(--warning)" }}>
-            Could not read that address. Either it is not a splitter, or the chain did not answer.
+            Could not read that address on {activeBotChain.name}. Either it is not a splitter, it
+            lives on the other network, or the chain did not answer.
           </p>
         </Panel>
       )}

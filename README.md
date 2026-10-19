@@ -11,11 +11,15 @@ Deploy an address that splits whatever it receives, by shares nobody can change.
 | Contract | [`0x97d836c2D41de4e3bfC9cfe15bC87a5598836D6a`](https://scan.bohr.life/address/0x97d836c2D41de4e3bfC9cfe15bC87a5598836D6a) · source verified |
 | Deploy block | 27061871 |
 
-### BOT Chain mainnet (677) — not yet deployed
+### BOT Chain mainnet (677) — live
 
-Mainnet is the only network the listing bar accepts. The site currently targets Bohr, and the
-network badge reads **Testnet** in amber so a screenshot from it can never be mistaken for
-listing proof.
+| | |
+|---|---|
+| Contract | [`0x97d836c2D41de4e3bfC9cfe15bC87a5598836D6a`](https://scan.botchain.ai/address/0x97d836c2D41de4e3bfC9cfe15bC87a5598836D6a) · source verified |
+| Deploy block | 27267215 |
+
+The site targets mainnet. The Bohr deployment above stays up and stays documented, so the
+contract can still be exercised somewhere mistakes are free.
 
 ---
 
