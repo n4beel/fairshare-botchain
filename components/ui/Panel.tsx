@@ -5,20 +5,15 @@ interface PanelProps extends HTMLAttributes<HTMLDivElement> {
   noPadding?: boolean;
 }
 
-export default function Panel({
-  elevated,
-  noPadding,
-  children,
-  className = "",
-  style,
-  ...props
-}: PanelProps) {
+/** Rounded, soft-edged block matching the explanatory register. */
+export default function Panel({ elevated, noPadding, children, className = "", style, ...props }: PanelProps) {
   return (
     <div
-      className={["rounded-none", noPadding ? "" : "p-5", className].join(" ")}
+      className={[noPadding ? "" : "p-6", className].join(" ")}
       style={{
         background: elevated ? "var(--bg-elevated)" : "var(--bg-surface)",
         border: "1px solid var(--border-subtle)",
+        borderRadius: "12px",
         ...style,
       }}
       {...props}
